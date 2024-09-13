@@ -11,13 +11,13 @@ async function getDatabase(tenantId) {
   return connections[tenantId];
 }
 
-async function tenantExists(tenantId) {
+async function tenantExists(tenantId, email) {
   const client = new MongoClient(process.env.MONGO_URI);
   await client.connect();
   const RegisteredUsers = client.db("master").collection("users");
   const doesTenantExist = await RegisteredUsers.findOne({
     role: "SCHOOL",
-    tenantId,
+    $or: [{ tenantId }, { email }],
   });
 
   const adminDb = client.db().admin();

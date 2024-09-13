@@ -7,13 +7,14 @@ const router = Router({
 const testRoutes = require("./test");
 const authRoutes = require("./auth");
 
-router.use("/auth", authRoutes);
-
 const authMiddleware = require("../middleware/authMiddleware");
 const tenantDbMiddleware = require("../middleware/tenantDbMiddleware");
-router.use("/test", testRoutes);
+
+router.use("/auth", authRoutes);
 
 router.use(authMiddleware);
 router.use(tenantDbMiddleware);
+
+router.use("/test", testRoutes);
 
 module.exports = router;

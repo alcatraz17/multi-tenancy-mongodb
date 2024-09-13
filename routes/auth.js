@@ -11,25 +11,33 @@ router.use(masterDbMiddleware);
 router.post("/registration", async (req, res) => {
   // Change the endpoint to /school-registration
   try {
-    const { email, password, username } = req.body;
+    const { email, password, username, role = "SCHOOL" } = req.body;
     if (!email || !password || !username) {
       return res
         .status(400)
         .json("Email and password or username are required!"); // Validate it using JOI instead of this block.
     }
 
-    const doesTenantExist = await tenantExists(username);
-    if (doesTenantExist) {
-      return res
-        .status(400)
-        .json("Username is taken. Please try with another one.");
+    const doesTenantExist = await tenantExists(username, email);
+
+    const isEmailOrUsernameTaken =
+      doesTenantExist?.email === email
+        ? "Email"
+        : doesTenantExist
+        ? "Username"
+        : null;
+
+    if (isEmailOrUsernameTaken) {
+      return res.status(400).json({
+        message: `${isEmailOrUsernameTaken} is already registered with us!`,
+      });
     }
 
     const user = await req.db.collection("users").insertOne({
       email,
       password,
       username,
-      role: "SCHOOL",
+      role,
       tenantId: username,
     });
 

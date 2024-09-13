@@ -1,5 +1,5 @@
 const Router = require("express").Router;
-const faker = require("@faker-js/faker");
+const { faker } = require("@faker-js/faker");
 
 const router = Router({
   mergeParams: true,
@@ -10,12 +10,12 @@ router.post("/add-data", async (req, res) => {
     const db = await req.db;
 
     const data = Array.from({ length: 10 }, () => ({
-      name: faker.name.findName(),
+      name: faker.person.fullName(),
       email: faker.internet.email(),
-      phone: faker.phone.phoneNumber(),
-      address: faker.address.streetAddress(),
-      city: faker.address.city(),
-      country: faker.address.country(),
+      phone: faker.phone.number(),
+      address: faker.location.streetAddress(),
+      city: faker.location.city(),
+      country: faker.location.country(),
     }));
 
     await db.collection("testing").insertMany(data);
@@ -35,9 +35,11 @@ router.get("/get-data", async (req, res) => {
   try {
     const db = await req.db;
 
-    const data = await db.collection("testing").find().toArray();
+    // Fetch data from the database and limit 10 records
+    const data = await db.collection("testing").find().limit(10).toArray();
 
     return res.status(200).json({
+      message: "Data fetched successfully!",
       data,
     });
   } catch (error) {
