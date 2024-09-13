@@ -33,7 +33,7 @@ router.post("/registration", async (req, res) => {
       tenantId: username,
     });
 
-    const token = generateToken({ email, username, tenantId: username });
+    const token = generateToken({ email, role, tenantId: username });
     return res.status(201).json({
       message: "User registered successfully!",
       token,
@@ -60,7 +60,7 @@ router.post("/login", async (req, res) => {
 
     const token = generateToken({
       email,
-      username: user.username,
+      role: user.role,
       tenantId: user.tenantId,
     });
     return res.status(200).json({
