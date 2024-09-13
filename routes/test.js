@@ -1,5 +1,5 @@
 const Router = require("express").Router;
-const faker = require("faker");
+const faker = require("@faker-js/faker");
 
 const router = Router({
   mergeParams: true,
@@ -12,8 +12,10 @@ router.post("/add-data", async (req, res) => {
     const data = Array.from({ length: 10 }, () => ({
       name: faker.name.findName(),
       email: faker.internet.email(),
-      address: faker.address.streetAddress(),
       phone: faker.phone.phoneNumber(),
+      address: faker.address.streetAddress(),
+      city: faker.address.city(),
+      country: faker.address.country(),
     }));
 
     await db.collection("testing").insertMany(data);
